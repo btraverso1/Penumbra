@@ -1,1 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PENUMBRA</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Georgia,serif;background:#F2F1ED;color:#1a1a2e;font-size:14px;}
+.topbar{height:56px;background:#0f1f3d;display:flex;align-items:center;padding:0 32px;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{font-size:16px;color:#fff;letter-spacing:3px;text-transform:uppercase;font-family:Georgia,serif;cursor:pointer;}
+.logo span{color:#93c5fd;}
+.topnav{display:flex;gap:4px;}
+.tnb{font-size:12px;padding:6px 16px;border-radius:3px;border:none;color:rgba(255,255,255,0.6);cursor:pointer;background:transparent;font-family:Arial,sans-serif;letter-spacing:0.5px;}
+.tnb:hover{color:#fff;background:rgba(255,255,255,0.08);}
+.tnb.active{color:#fff;background:rgba(255,255,255,0.15);font-weight:700;}
+.top-date{font-size:13px;color:#fff;font-family:Arial,sans-serif;font-weight:500;}
+.page{display:none;}
+.page.active{display:block;}
+.hero{background:#dce6f0;border-bottom:1px solid #c8d4e0;display:flex;align-items:stretch;padding:56px 48px;gap:48px;}
+.hero-box{width:210px;flex-shrink:0;background:#0f1f3d;border-radius:6px;padding:22px;}
+.hero-box-label{font-size:9px;letter-spacing:2px;color:#4fc3a1;text-transform:uppercase;font-family:Arial,sans-serif;font-weight:700;margin-bottom:12px;}
+.hero-box-name{font-size:13px;color:#fff;font-family:Georgia,serif;letter-spacing:3px;margin-bottom:14px;text-transform:uppercase;}
+.hero-box-name span{color:#93c5fd;}
+.hero-box-text{font-size:12px;color:rgba(255,255,255,0.75);font-family:Arial,sans-serif;line-height:1.8;}
+.hero-box-text p{margin-bottom:8px;}
+.hero-centre{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}
+.hero-title{font-size:72px;color:#1a1a2e;font-weight:normal;letter-spacing:10px;line-height:1;margin-bottom:24px;font-family:Georgia,serif;text-transform:uppercase;}
+.hero-title span{color:#2563eb;}
+.hero-rule{width:40px;height:1px;background:#1a1a2e;opacity:0.2;margin:0 auto 24px;}
+.hero-desc{font-size:15px;color:#2a2a2a;line-height:1.9;max-width:440px;font-family:Georgia,serif;font-style:italic;}
+.topic-bar{background:#fff;border-bottom:1px solid #e0dfd9;padding:0 32px;display:flex;gap:0;position:sticky;top:56px;z-index:90;}
+.topic-tab{font-size:12px;font-weight:700;letter-spacing:0.5px;padding:14px 18px;cursor:pointer;color:#6b7280;font-family:Arial,sans-serif;border-bottom:2px solid transparent;text-transform:uppercase;}
+.topic-tab:hover{color:#0f1f3d;}
+.topic-tab.active{color:#0f1f3d;border-bottom-color:#2563eb;}
+.search-bar{background:#fff;border-bottom:1px solid #e0dfd9;padding:10px 32px;}
+.search-input{width:100%;max-width:500px;border:1px solid #e0dfd9;border-radius:3px;padding:8px 14px;font-size:12px;color:#1a1a2e;font-family:Arial,sans-serif;outline:none;background:#fafaf8;}
+.search-input:focus{border-color:#2563eb;}
+.search-input::placeholder{color:#9ca3af;}
+.content-wrap{display:flex;min-height:calc(100vh - 56px);}
+.content-main{flex:1;padding:28px 32px;}
+.content-right{width:234px;flex-shrink:0;border-left:1px solid #e0dfd9;padding:22px;background:#fff;}
+.loading{display:flex;align-items:center;gap:8px;padding:40px 0;color:#9ca3af;font-family:Arial,sans-serif;font-size:12px;}
+.ld{width:5px;height:5px;border-radius:50%;background:#2563eb;animation:bounce 1s infinite;}
+.ld:nth-child(2){animation-delay:0.15s;}
+.ld:nth-child(3){animation-delay:0.3s;}
+@keyframes bounce{0%,80%,100%{transform:translateY(0);}40%{transform:translateY(-5px);}}
+.news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.news-card{background:#fff;border:1px solid #e0dfd9;border-radius:6px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;transition:border-color 0.15s;}
+.news-card:hover{border-color:#2563eb;}
+.nc-img{height:130px;background:#f0eff9;display:flex;align-items:center;justify-content:center;border-bottom:1px solid #f0efe9;flex-shrink:0;overflow:hidden;}
+.nc-img img{width:100%;height:100%;object-fit:cover;display:block;}
+.nc-placeholder{font-size:11px;font-weight:700;color:#9ca3af;letter-spacing:1px;font-family:Arial,sans-serif;text-transform:uppercase;}
+.nc-body{padding:14px;flex:1;display:flex;flex-direction:column;}
+.nc-tags{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
+.nc-tag{font-size:9px;font-weight:700;letter-spacing:0.6px;padding:2px 8px;border-radius:2px;font-family:Arial,sans-serif;text-transform:uppercase;}
+.tag-eu{background:#e8f0fe;color:#1e40af;}
+.tag-uk{background:#f0fdf4;color:#166534;}
+.tag-trade{background:#fffbeb;color:#92400e;}
+.tag-spain{background:#fef2f2;color:#991b1b;}
+.tag-us{background:#f5f3ff;color:#5b21b6;}
+.tag-global{background:#f0f9ff;color:#075985;}
+.nc-live{font-size:9px;color:#1D9E75;font-weight:700;letter-spacing:0.6px;font-family:Arial,sans-serif;text-transform:uppercase;}
+.nc-headline{font-size:13px;color:#0f1f3d;line-height:1.45;flex:1;margin-bottom:10px;}
+.nc-meta{display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid #f0efe9;margin-top:auto;}
+.nc-source{font-size:10px;color:#9ca3af;font-family:Arial,sans-serif;}
+.nc-date{font-size:10px;color:#9ca3af;font-family:Arial,sans-serif;}
+.bk-section-title{font-size:11px;font-weight:700;letter-spacing:2px;color:#0f1f3d;text-transform:uppercase;font-family:Arial,sans-serif;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #0f1f3d;}
+.bk-section{margin-bottom:20px;}
+.bk-cat{font-size:10px;color:#6b7280;font-family:Arial,sans-serif;font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;}
+.bk-item{display:block;padding:5px 8px;font-size:12px;color:#374151;font-family:Arial,sans-serif;text-decoration:none;border-radius:3px;border-left:2px solid transparent;margin-bottom:2px;transition:all 0.1s;}
+.bk-item:hover{background:#f7f6f2;color:#0f1f3d;border-left-color:#2563eb;}
+.bk-domain{font-size:10px;color:#9ca3af;display:block;}
+.detail-back{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#2563eb;cursor:pointer;margin-bottom:22px;font-family:Arial,sans-serif;}
+.detail-back:hover{text-decoration:underline;}
+.detail-wrap{display:grid;grid-template-columns:1fr 320px;gap:24px;}
+.detail-img{height:260px;border-radius:6px;overflow:hidden;background:#f0eff9;display:flex;align-items:center;justify-content:center;margin-bottom:20px;border:1px solid #e0dfd9;}
+.detail-img img{width:100%;height:100%;object-fit:cover;}
+.detail-tag-row{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.detail-title{font-size:22px;color:#0f1f3d;line-height:1.4;margin-bottom:12px;}
+.detail-summary{font-size:13px;color:#374151;line-height:1.75;margin-bottom:16px;font-family:Arial,sans-serif;}
+.detail-link{font-size:12px;color:#2563eb;font-family:Arial,sans-serif;text-decoration:none;}
+.detail-link:hover{text-decoration:underline;}
+.panel{background:#fff;border:1px solid #e0dfd9;border-radius:6px;overflow:hidden;margin-bottom:14px;}
+.panel-hd{background:#f7f6f2;padding:10px 16px;border-bottom:1px solid #e0dfd9;display:flex;align-items:center;gap:8px;}
+.panel-badge{width:22px;height:22px;border-radius:3px;background:#0f1f3d;color:#fff;font-size:10px;font-weight:700;font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.panel-title{font-size:11px;font-weight:700;color:#0f1f3d;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:0.3px;}
+.panel-body{padding:14px 16px;font-size:13px;color:#374151;line-height:1.75;font-family:Arial,sans-serif;}
+.st-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #f7f6f2;}
+.st-item:last-child{border-bottom:none;}
+.st-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.st-name{font-size:12px;font-weight:700;color:#0f1f3d;font-family:Arial,sans-serif;}
+.st-role{font-size:11px;color:#6b7280;font-family:Arial,sans-serif;}
+.st-pos{font-size:10px;color:#9ca3af;font-family:Arial,sans-serif;}
+.sc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.sc-card{background:#f7f6f2;border-radius:4px;padding:10px 12px;}
+.sc-label{font-size:9px;font-weight:700;color:#9ca3af;letter-spacing:0.8px;font-family:Arial,sans-serif;margin-bottom:3px;text-transform:uppercase;}
+.sc-title{font-size:12px;color:#0f1f3d;margin-bottom:4px;font-family:Georgia,serif;}
+.sc-body{font-size:11px;color:#4a5568;line-height:1.5;font-family:Arial,sans-serif;}
+.analyse-wrap{padding:32px;max-width:760px;}
+.analyse-title{font-size:24px;color:#0f1f3d;margin-bottom:6px;font-family:Georgia,serif;}
+.analyse-sub{font-size:13px;color:#6b7280;font-family:Arial,sans-serif;line-height:1.6;margin-bottom:24px;}
+.analyse-input-row{display:flex;gap:10px;margin-bottom:28px;}
+.analyse-input{flex:1;border:1px solid #e0dfd9;border-radius:4px;padding:10px 14px;font-size:13px;font-family:Arial,sans-serif;outline:none;background:#fff;color:#1a1a2e;}
+.analyse-input:focus{border-color:#2563eb;}
+.analyse-btn{background:#0f1f3d;color:#fff;border:none;border-radius:4px;padding:10px 20px;font-size:12px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;letter-spacing:0.5px;}
+.brief-header{background:#0f1f3d;border-radius:6px;padding:18px 22px;margin-bottom:14px;}
+.brief-label{font-size:9px;letter-spacing:2px;color:#4fc3a1;font-family:Arial,sans-serif;font-weight:700;margin-bottom:8px;text-transform:uppercase;}
+.brief-title{font-size:15px;color:#fff;font-family:Georgia,serif;margin-bottom:8px;}
+.brief-text{font-size:12px;color:rgba(255,255,255,0.75);font-family:Arial,sans-serif;line-height:1.7;}
+.leg-wrap{padding:28px 32px;}
+.leg-title{font-size:24px;color:#0f1f3d;margin-bottom:6px;font-family:Georgia,serif;}
+.leg-sub{font-size:13px;color:#6b7280;font-family:Arial,sans-serif;margin-bottom:20px;}
+.leg-filters{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
+.lf{font-size:11px;padding:5px 12px;border-radius:3px;border:1px solid #e0dfd9;cursor:pointer;color:#4a5568;background:#fff;font-family:Arial,sans-serif;}
+.lf.active{background:#0f1f3d;color:#fff;border-color:#0f1f3d;}
+.leg-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e0dfd9;border-radius:6px;overflow:hidden;}
+.leg-table th{font-size:10px;font-weight:700;color:#6b7280;letter-spacing:0.8px;text-transform:uppercase;font-family:Arial,sans-serif;padding:11px 14px;text-align:left;background:#f7f6f2;border-bottom:1px solid #e0dfd9;}
+.leg-table td{padding:12px 14px;font-size:12px;color:#374151;font-family:Arial,sans-serif;border-bottom:1px solid #f0efe9;vertical-align:top;}
+.leg-table tr:last-child td{border-bottom:none;}
+.leg-table tr:hover td{background:#fafaf8;cursor:pointer;}
+.leg-name{font-size:13px;color:#0f1f3d;font-weight:500;margin-bottom:3px;}
+.leg-desc{font-size:11px;color:#6b7280;line-height:1.4;}
+.j-pill{display:inline-block;font-size:10px;padding:2px 7px;border-radius:3px;font-family:Arial,sans-serif;font-weight:600;}
+.jp-eu{background:#e8f0fe;color:#1e40af;}
+.jp-uk{background:#f0fdf4;color:#166534;}
+.jp-us{background:#fffbeb;color:#92400e;}
+.jp-es{background:#fef2f2;color:#991b1b;}
+.stage-pill{display:inline-block;font-size:10px;padding:2px 8px;border-radius:3px;font-family:Arial,sans-serif;font-weight:600;}
+.sp-pre{background:#f5f3ff;color:#5b21b6;}
+.sp-leg{background:#e8f0fe;color:#1e40af;}
+.sp-con{background:#fffbeb;color:#92400e;}
+.sp-com{background:#f0fdf4;color:#166534;}
+.status-urgent{color:#b91c1c;font-weight:700;}
+.status-active{color:#1D9E75;font-weight:700;}
+.leg-link{font-size:11px;color:#2563eb;text-decoration:none;font-family:Arial,sans-serif;}
+.leg-link:hover{text-decoration:underline;}
+.cal-wrap{padding:28px 32px;}
+.cal-title{font-size:24px;color:#0f1f3d;margin-bottom:6px;font-family:Georgia,serif;}
+.cal-sub{font-size:13px;color:#6b7280;font-family:Arial,sans-serif;margin-bottom:24px;}
+.cal-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.cal-box{background:#fff;border:1px solid #e0dfd9;border-radius:6px;overflow:hidden;}
+.cal-box-hd{background:#f7f6f2;padding:11px 18px;border-bottom:1px solid #e0dfd9;font-size:11px;font-weight:700;color:#0f1f3d;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:0.5px;}
+.cal-item{display:flex;gap:14px;padding:12px 18px;border-bottom:1px solid #f0efe9;align-items:flex-start;}
+.cal-item:last-child{border-bottom:none;}
+.cal-date{font-size:11px;font-weight:700;color:#2563eb;min-width:60px;font-family:Arial,sans-serif;padding-top:2px;}
+.cal-type{display:inline-block;font-size:9px;font-weight:700;padding:1px 6px;border-radius:2px;font-family:Arial,sans-serif;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;}
+.ct-election{background:#fef2f2;color:#991b1b;}
+.ct-summit{background:#f0fdf4;color:#166534;}
+.ct-deadline{background:#fffbeb;color:#92400e;}
+.cal-event{font-size:12px;color:#0f1f3d;margin-bottom:2px;line-height:1.4;}
+.cal-country{font-size:10px;color:#9ca3af;font-family:Arial,sans-serif;}
+.no-results{padding:40px 0;text-align:center;color:#9ca3af;font-family:Arial,sans-serif;font-size:13px;}
+.key-banner{background:#0f1f3d;padding:12px 32px;display:flex;align-items:center;gap:12px;}
+.key-banner input{flex:1;max-width:400px;border:1px solid rgba(255,255,255,0.2);border-radius:3px;padding:7px 12px;font-size:12px;background:rgba(255,255,255,0.1);color:#fff;font-family:Arial,sans-serif;outline:none;}
+.key-banner input::placeholder{color:rgba(255,255,255,0.4);}
+.key-banner button{background:#4fc3a1;color:#0f1f3d;border:none;border-radius:3px;padding:7px 16px;font-size:11px;font-weight:700;font-family:Arial,sans-serif;cursor:pointer;letter-spacing:0.5px;}
+.key-banner span{font-size:11px;color:rgba(255,255,255,0.6);font-family:Arial,sans-serif;}
+</style>
+</head>
+<body>
 
+<div class="topbar">
+  <div class="logo" onclick="goHome()">PEN<span>UMBRA</span></div>
+  <div class="topnav">
+    <button class="tnb active" onclick="showPage('feed',this)">Feed</button>
+    <button class="tnb" onclick="showPage('analyse',this)">Analyse</button>
+    <button class="tnb" onclick="showPage('legislation',this)">Legislation</button>
+    <button class="tnb" onclick="showPage('calendar',this)">Calendar</button>
+  </div>
+  <div class="top-date" id="liveDate"></div>
+</div>
+
+<div id="page-feed" class="page active">
+  <div class="hero">
+    <div class="hero-box">
+      <div class="hero-box-label">Why Penumbra</div>
+      <div class="hero-box-name">PEN<span>UMBRA</span></div>
+      <div class="hero-box-text">
+        <p>From Latin: pen (almost) and umbra (shadow).</p>
+        <p>The penumbra is the zone between full light and full darkness. Where things are unclear, in motion, not yet decided.</p>
+        <p>Most of what shapes the world happens there.</p>
+      </div>
+    </div>
+    <div class="hero-centre">
+      <div class="hero-title">PEN<span>UMBRA</span></div>
+      <div class="hero-rule"></div>
+      <div class="hero-desc">Everything I read, finally in one place.</div>
+    </div>
+  </div>
+
+  <div id="keyBanner" class="key-banner">
+    <span>Claude API key for AI analysis:</span>
+    <input type="password" id="keyInput" placeholder="placeholder="Enter your API key here">
+    <button onclick="saveKey()">Save Key</button>
+    <span id="keyStatus"></span>
+  </div>
+
+  <div class="topic-bar">
+    <div class="topic-tab active" onclick="setTopic(this,'all')">All</div>
+    <div class="topic-tab" onclick="setTopic(this,'EU Affairs')">EU Affairs</div>
+    <div class="topic-tab" onclick="setTopic(this,'UK Policy')">UK Policy</div>
+    <div class="topic-tab" onclick="setTopic(this,'International Trade')">International Trade</div>
+    <div class="topic-tab" onclick="setTopic(this,'Spain')">Spain</div>
+    <div class="topic-tab" onclick="setTopic(this,'The United States')">The United States</div>
+    <div class="topic-tab" onclick="setTopic(this,'Global Policy')">Global Policy</div>
+  </div>
+
+  <div class="search-bar">
+    <input class="search-input" type="text" placeholder="Search stories..." id="searchInput" oninput="handleSearch(this.value)">
+  </div>
+
+  <div id="feed-view">
+    <div class="content-wrap">
+      <div class="content-main">
+        <div id="newsContainer">
+          <div class="loading"><span class="ld"></span><span class="ld"></span><span class="ld"></span><span>Loading live stories...</span></div>
+        </div>
+      </div>
+      <div class="content-right">
+        <div class="bk-section-title">Quick Links</div>
+        <div class="bk-section">
+          <div class="bk-cat">Trade and Policy</div>
+          <a class="bk-item" href="https://globaltradealert.org" target="_blank">Global Trade Alert<span class="bk-domain">globaltradealert.org</span></a>
+          <a class="bk-item" href="https://foreignpolicy.com" target="_blank">Foreign Policy<span class="bk-domain">foreignpolicy.com</span></a>
+          <a class="bk-item" href="https://www.euractiv.com" target="_blank">Euractiv<span class="bk-domain">euractiv.com</span></a>
+          <a class="bk-item" href="https://www.weforum.org" target="_blank">WEF<span class="bk-domain">weforum.org</span></a>
+          <a class="bk-item" href="https://flint-global.com/insights/" target="_blank">Flint Global<span class="bk-domain">flint-global.com</span></a>
+        </div>
+        <div class="bk-section">
+          <div class="bk-cat">News and Markets</div>
+          <a class="bk-item" href="https://www.reuters.com" target="_blank">Reuters<span class="bk-domain">reuters.com</span></a>
+          <a class="bk-item" href="https://www.ft.com" target="_blank">Financial Times<span class="bk-domain">ft.com</span></a>
+          <a class="bk-item" href="https://www.theguardian.com" target="_blank">The Guardian<span class="bk-domain">theguardian.com</span></a>
+          <a class="bk-item" href="https://www.bbc.co.uk/news" target="_blank">BBC News<span class="bk-domain">bbc.co.uk</span></a>
+          <a class="bk-item" href="https://www.politico.eu" target="_blank">Politico Europe<span class="bk-domain">politico.eu</span></a>
+          <a class="bk-item" href="https://www.expansion.com" target="_blank">Expansion<span class="bk-domain">expansion.com</span></a>
+        </div>
+        <div class="bk-section">
+          <div class="bk-cat">Spain</div>
+          <a class="bk-item" href="https://elpais.com" target="_blank">El Pais<span class="bk-domain">elpais.com</span></a>
+          <a class="bk-item" href="https://www.elconfidencial.com" target="_blank">El Confidencial<span class="bk-domain">elconfidencial.com</span></a>
+          <a class="bk-item" href="https://www.elespanol.com" target="_blank">El Espanol<span class="bk-domain">elespanol.com</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="detail-view" style="display:none;padding:28px 32px;">
+    <div class="detail-back" onclick="closeDetail()">Back to Feed</div>
+    <div class="detail-wrap">
+      <div id="detail-main"></div>
+      <div id="detail-side"></div>
+    </div>
+  </div>
+</div>
+
+<div id="page-analyse" class="page">
+  <div class="analyse-wrap">
+    <div class="analyse-title">Analyse Any Article</div>
+    <div class="analyse-sub">Paste any article URL and get a full intelligence brief. Background, implications, stakeholders and scenarios. Powered by Claude.</div>
+    <div class="analyse-input-row">
+      <input class="analyse-input" type="text" id="analyseUrl" placeholder="https://www.ft.com/content/...">
+      <button class="analyse-btn" onclick="runAnalysis()">ANALYSE</button>
+    </div>
+    <div id="analyseResult"></div>
+  </div>
+</div>
+
+<div id="page-legislation" class="page">
+  <div class="leg-wrap">
+    <div class="leg-title">Legislative and Regulatory Tracker</div>
+    <div class="leg-sub">Click any row to go directly to the official source</div>
+    <div class="leg-filters">
+      <button class="lf active" onclick="filterLeg(this,'all')">All</button>
+      <button class="lf" onclick="filterLeg(this,'EU')">EU</button>
+      <button class="lf" onclick="filterLeg(this,'UK')">UK</button>
+      <button class="lf" onclick="filterLeg(this,'US')">US</button>
+      <button class="lf" onclick="filterLeg(this,'ES')">Spain</button>
+      <button class="lf" onclick="filterLeg(this,'urgent')">Urgent</button>
+      <button class="lf" onclick="filterLeg(this,'consultation')">Consultations</button>
+      <button class="lf" onclick="filterLeg(this,'bill')">Bills</button>
+    </div>
+    <table class="leg-table">
+      <thead>
+        <tr>
+          <th style="width:28%">Bill / Regulation</th>
+          <th style="width:7%">Jurisdiction</th>
+          <th style="width:13%">Stage</th>
+          <th style="width:13%">Next deadline</th>
+          <th style="width:7%">Status</th>
+          <th style="width:22%">What it means</th>
+          <th style="width:10%">Source</th>
+        </tr>
+      </thead>
+      <tbody id="legBody">
+        <tr data-j="EU" data-type="bill" data-urgent="false" onclick="window.open('https://digital-strategy.ec.europa.eu/en/policies/cybersecurity','_blank')">
+          <td><div class="leg-name">EU Digital Infrastructure Directive</div><div class="leg-desc">Requires critical digital infrastructure to maintain data processing within EU jurisdiction</div></td>
+          <td><span class="j-pill jp-eu">EU</span></td>
+          <td><span class="stage-pill sp-pre">Pre-legislative</span></td>
+          <td>12 Apr 2026<br><span style="font-size:10px;color:#9ca3af;">Consultation opens</span></td>
+          <td><span class="status-active">Active</span></td>
+          <td style="font-size:11px;color:#6b7280;">Major implications for cloud providers and data-dependent businesses operating in the EU.</td>
+          <td><a class="leg-link" href="https://digital-strategy.ec.europa.eu" target="_blank">ec.europa.eu</a></td>
+        </tr>
+        <tr data-j="UK" data-type="bill" data-urgent="false" onclick="window.open('https://bills.parliament.uk/bills/3738','_blank')">
+          <td><div class="leg-name">Great British Energy Act 2025</div><div class="leg-desc">Establishes Great British Energy, a publicly owned company investing in clean energy infrastructure</div></td>
+          <td><span class="j-pill jp-uk">UK</span></td>
+          <td><span class="stage-pill sp-com">Royal Assent</span></td>
+          <td>Ongoing<br><span style="font-size:10px;color:#9ca3af;">Implementation</span></td>
+          <td><span class="status-active">Active</span></td>
+          <td style="font-size:11px;color:#6b7280;">8.3bn public investment in clean energy. Defines UK clean energy investment rules for the next decade.</td>
+          <td><a class="leg-link" href="https://bills.parliament.uk/bills/3738" target="_blank">parliament.uk</a></td>
+        </tr>
+        <tr data-j="EU" data-type="bill" data-urgent="true" onclick="window.open('https://www.europarl.europa.eu/legislative-train/theme-a-europe-fit-for-the-digital-age/file-ai-liability-directive','_blank')">
+          <td><div class="leg-name">EU AI Liability Directive</div><div class="leg-desc">Liability rules for AI systems causing harm</div></td>
+          <td><span class="j-pill jp-eu">EU</span></td>
+          <td><span class="stage-pill sp-leg">Parliament 1st reading</span></td>
+          <td>19 Mar 2026<br><span style="font-size:10px;color:#9ca3af;">Amendment deadline</span></td>
+          <td><span class="status-urgent">Urgent</span></td>
+          <td style="font-size:11px;color:#6b7280;">Expanded scope would disproportionately affect SME AI developers.</td>
+          <td><a class="leg-link" href="https://www.europarl.europa.eu" target="_blank">europarl.eu</a></td>
+        </tr>
+        <tr data-j="EU" data-type="consultation" data-urgent="true" onclick="window.open('https://taxation-customs.ec.europa.eu/carbon-border-adjustment-mechanism_en','_blank')">
+          <td><div class="leg-name">CBAM Embedded Emissions</div><div class="leg-desc">Updated methodology for embedded emissions under Carbon Border Adjustment Mechanism</div></td>
+          <td><span class="j-pill jp-eu">EU</span></td>
+          <td><span class="stage-pill sp-con">Consultation open</span></td>
+          <td>25 Mar 2026<br><span style="font-size:10px;color:#9ca3af;">Responses due</span></td>
+          <td><span class="status-urgent">Urgent</span></td>
+          <td style="font-size:11px;color:#6b7280;">Increases effective carbon price for non-EU steel and aluminium importers.</td>
+          <td><a class="leg-link" href="https://taxation-customs.ec.europa.eu" target="_blank">ec.europa.eu</a></td>
+        </tr>
+        <tr data-j="US" data-type="bill" data-urgent="false" onclick="window.open('https://www.federalregister.gov','_blank')">
+          <td><div class="leg-name">US CHIPS Act - Allied Provisions</div><div class="leg-desc">Implementation rulemaking for semiconductor subsidies available to allied nation firms</div></td>
+          <td><span class="j-pill jp-us">US</span></td>
+          <td><span class="stage-pill sp-com">Guidance published</span></td>
+          <td>30 Apr 2026<br><span style="font-size:10px;color:#9ca3af;">Comment period</span></td>
+          <td><span class="status-active">Active</span></td>
+          <td style="font-size:11px;color:#6b7280;">Defines eligibility for EU and UK semiconductor firms accessing US federal subsidies.</td>
+          <td><a class="leg-link" href="https://www.federalregister.gov" target="_blank">federalregister.gov</a></td>
+        </tr>
+        <tr data-j="UK" data-type="bill" data-urgent="false" onclick="window.open('https://www.ofcom.org.uk/online-safety','_blank')">
+          <td><div class="leg-name">Online Safety Act - Secondary Legislation</div><div class="leg-desc">Ofcom implementing regulations defining platform content moderation obligations</div></td>
+          <td><span class="j-pill jp-uk">UK</span></td>
+          <td><span class="stage-pill sp-com">Implementation</span></td>
+          <td>Q2 2026<br><span style="font-size:10px;color:#9ca3af;">Compliance deadline</span></td>
+          <td><span class="status-active">Active</span></td>
+          <td style="font-size:11px;color:#6b7280;">Platforms must implement age verification and content moderation. Fines up to 10% of global revenue.</td>
+          <td><a class="leg-link" href="https://www.ofcom.org.uk" target="_blank">ofcom.org.uk</a></td>
+        </tr>
+        <tr data-j="EU" data-type="consultation" data-urgent="false" onclick="window.open('https://single-market-economy.ec.europa.eu/sectors/raw-materials/areas-specific-interest/critical-raw-materials/critical-raw-materials-act_en','_blank')">
+          <td><div class="leg-name">EU Critical Raw Materials Act</div><div class="leg-desc">Delegated acts specifying strategic project criteria and national stockpiling obligations</div></td>
+          <td><span class="j-pill jp-eu">EU</span></td>
+          <td><span class="stage-pill sp-con">Consultation open</span></td>
+          <td>15 Apr 2026<br><span style="font-size:10px;color:#9ca3af;">Responses due</span></td>
+          <td><span class="status-active">Active</span></td>
+          <td style="font-size:11px;color:#6b7280;">Critical for battery, defence and clean tech supply chains seeking fast-track permitting.</td>
+          <td><a class="leg-link" href="https://single-market-economy.ec.europa.eu" target="_blank">ec.europa.eu</a></td>
+        </tr>
+        <tr data-j="ES" data-type="bill" data-urgent="false" onclick="window.open('https://www.boe.es','_blank')">
+          <td><div class="leg-name">Spain - Ley de Vivienda</div><div class="leg-desc">Regional implementation of 2023 Housing Law rent control and tenant protection provisions</div></td>
+          <td><span class="j-pill jp-es">ES</span></td>
+          <td><span class="stage-pill sp-leg">Regional implementation</span></td>
+          <td>Jun 2026<br><span style="font-size:10px;color:#9ca3af;">Madrid deadline</span></td>
+          <td><span class="status-active">Active</span></td>
+          <td style="font-size:11px;color:#6b7280;">Constitutional Court ruling forces PP regions to implement rent controls.</td>
+          <td><a class="leg-link" href="https://www.boe.es" target="_blank">boe.es</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div id="page-calendar" class="page">
+  <div class="cal-wrap">
+    <div class="cal-title">Political and Legislative Calendar</div>
+    <div class="cal-sub">Upcoming elections, summits and key legislative deadlines</div>
+    <div class="cal-grid">
+      <div class="cal-box">
+        <div class="cal-box-hd">Elections and Political Events</div>
+        <div class="cal-item"><div class="cal-date">Apr 2026</div><div><span class="cal-type ct-election">Election</span><div class="cal-event">Hungarian Parliamentary Election</div><div class="cal-country">Hungary</div></div></div>
+        <div class="cal-item"><div class="cal-date">May 2026</div><div><span class="cal-type ct-election">Election</span><div class="cal-event">Polish Presidential Election</div><div class="cal-country">Poland</div></div></div>
+        <div class="cal-item"><div class="cal-date">Nov 2026</div><div><span class="cal-type ct-election">Election</span><div class="cal-event">US Midterm Elections</div><div class="cal-country">United States</div></div></div>
+        <div class="cal-item"><div class="cal-date">2027</div><div><span class="cal-type ct-election">Election</span><div class="cal-event">French Presidential Election</div><div class="cal-country">France</div></div></div>
+        <div class="cal-item"><div class="cal-date">2027</div><div><span class="cal-type ct-election">Election</span><div class="cal-event">Spanish General Election</div><div class="cal-country">Spain</div></div></div>
+        <div class="cal-item"><div class="cal-date">2029</div><div><span class="cal-type ct-election">Election</span><div class="cal-event">UK General Election</div><div class="cal-country">United Kingdom</div></div></div>
+      </div>
+      <div class="cal-box">
+        <div class="cal-box-hd">Summits and Deadlines</div>
+        <div class="cal-item"><div class="cal-date">19 Mar</div><div><span class="cal-type ct-deadline">Deadline</span><div class="cal-event">EU AI Liability amendment deadline</div><div class="cal-country">European Parliament</div></div></div>
+        <div class="cal-item"><div class="cal-date">25 Mar</div><div><span class="cal-type ct-deadline">Deadline</span><div class="cal-event">CBAM consultation closes</div><div class="cal-country">European Commission</div></div></div>
+        <div class="cal-item"><div class="cal-date">28 Mar</div><div><span class="cal-type ct-deadline">Deadline</span><div class="cal-event">UK Energy Security Bill committee report</div><div class="cal-country">House of Commons</div></div></div>
+        <div class="cal-item"><div class="cal-date">2 Apr</div><div><span class="cal-type ct-summit">Summit</span><div class="cal-event">European Council</div><div class="cal-country">Brussels</div></div></div>
+        <div class="cal-item"><div class="cal-date">14 Apr</div><div><span class="cal-type ct-summit">Summit</span><div class="cal-event">UK-EU Joint Trade Committee</div><div class="cal-country">London</div></div></div>
+        <div class="cal-item"><div class="cal-date">30 Apr</div><div><span class="cal-type ct-deadline">Deadline</span><div class="cal-event">US CHIPS Act comment period closes</div><div class="cal-country">Federal Register</div></div></div>
+        <div class="cal-item"><div class="cal-date">Jun 2026</div><div><span class="cal-type ct-summit">Summit</span><div class="cal-event">G7 Summit</div><div class="cal-country">Italy</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function getKey() { return localStorage.getItem('penumbra_claude_key') || ''; }
+
+function saveKey() {
+  var k = document.getElementById('keyInput').value.trim();
+  if (k) {
+    localStorage.setItem('penumbra_claude_key', k);
+    document.getElementById('keyStatus').textContent = 'Key saved.';
+    document.getElementById('keyStatus').style.color = '#4fc3a1';
+  }
+}
+
+(function() {
+  var k = getKey();
+  if (k) {
+    document.getElementById('keyInput').value = k;
+    document.getElementById('keyStatus').textContent = 'Key loaded.';
+    document.getElementById('keyStatus').style.color = '#4fc3a1';
+  }
+})();
+
+var topicFeeds = {
+  'EU Affairs': ['https://feeds.bbci.co.uk/news/world/europe/rss.xml'],
+  'UK Policy': ['https://feeds.bbci.co.uk/news/politics/rss.xml'],
+  'International Trade': ['https://feeds.bbci.co.uk/news/business/rss.xml'],
+  'Spain': ['https://www.theguardian.com/world/spain/rss'],
+  'The United States': ['https://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml'],
+  'Global Policy': ['https://www.theguardian.com/world/rss']
+};
+
+var keywords = {
+  'EU Affairs': ['EU','European Union','Brussels','Commission','European Parliament','MEP','directive','regulation','von der Leyen','European Council'],
+  'UK Policy': ['UK','Britain','British','parliament','Westminster','Starmer','Labour','Conservative','minister','Downing Street','Reeves'],
+  'International Trade': ['trade','tariff','sanction','export','import','WTO','customs','CBAM','embargo','supply chain'],
+  'Spain': ['Spain','Spanish','Madrid','Barcelona','Sanchez','PP','PSOE','Vox','Catalonia','Feijoo'],
+  'The United States': ['United States','US','America','Washington','Congress','Senate','Trump','Republican','Democrat','White House'],
+  'Global Policy': ['global','international','geopolitical','United Nations','UN','IMF','G7','G20','NATO','climate','diplomacy']
+};
+
+var tagMap = {
+  'EU Affairs':'tag-eu','UK Policy':'tag-uk','International Trade':'tag-trade',
+  'Spain':'tag-spain','The United States':'tag-us','Global Policy':'tag-global'
+};
+
+var labelMap = {
+  'EU Affairs':'EU','UK Policy':'UK','International Trade':'TRADE',
+  'Spain':'SPAIN','The United States':'US','Global Policy':'GLOBAL'
+};
+
+var allArticles = [];
+var newsCache = {};
+var currentTopic = 'all';
+
+function setLiveDate() {
+  var d = new Date();
+  var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('liveDate').textContent = days[d.getDay()] + ' ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+}
+
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.tnb').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('page-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+function goHome() {
+  closeDetail();
+  showPage('feed', document.querySelectorAll('.tnb')[0]);
+}
+
+async function fetchTopic(topic) {
+  if (newsCache[topic]) return newsCache[topic];
+  var feeds = topicFeeds[topic] || [];
+  var promises = feeds.map(function(url) {
+    return fetch('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(url))
+      .then(function(r) { return r.json(); })
+      .catch(function() { return null; });
+  });
+  var results = await Promise.all(promises);
+  var items = [];
+  results.forEach(function(d) { if (d && d.items) items = items.concat(d.items); });
+  var seen = {};
+  items = items.filter(function(i) {
+    if (!i.title || seen[i.title]) return false;
+    seen[i.title] = true;
+    return true;
+  });
+  var kws = keywords[topic] || [];
+  var filtered = items.filter(function(i) {
+    var t = (i.title + ' ' + (i.description || '')).toLowerCase();
+    return kws.some(function(k) { return t.includes(k.toLowerCase()); });
+  });
+  var res = (filtered.length > 0 ? filtered : items).slice(0, 6);
+  res.forEach(function(i) { i._topic = topic; });
+  newsCache[topic] = res;
+  return res;
+}
+
+async function loadAllNews() {
+  var topics = Object.keys(topicFeeds);
+  var all = [];
+  for (var i = 0; i < topics.length; i++) {
+    var items = await fetchTopic(topics[i]);
+    all = all.concat(items);
+  }
+  allArticles = all;
+  renderNews();
+}
+
+function renderNews() {
+  var container = document.getElementById('newsContainer');
+  var articles = currentTopic === 'all' ? allArticles : allArticles.filter(function(a) { return a._topic === currentTopic; });
+  if (!articles || articles.length === 0) {
+    container.innerHTML = '<div class="no-results">No stories found.</div>';
+    return;
+  }
+  var html = '<div class="news-grid">';
+  articles.forEach(function(a) {
+    var imgUrl = (a.enclosure && a.enclosure.link && a.enclosure.type && a.enclosure.type.includes('image')) ? a.enclosure.link : (a.thumbnail || '');
+    var imgHtml = imgUrl
+      ? '<img src="' + imgUrl + '" alt="" onerror="this.parentNode.innerHTML=\'<div class=&quot;nc-placeholder&quot;>' + labelMap[a._topic] + '</div>\'">'
+      : '<div class="nc-placeholder">' + labelMap[a._topic] + '</div>';
+    var date = a.pubDate ? a.pubDate.substring(0, 10) : '';
+    var encoded = encodeURIComponent(JSON.stringify(a));
+    html += '<div class="news-card" onclick="openDetail(decodeURIComponent(\'' + encoded + '\'))">';
+    html += '<div class="nc-img">' + imgHtml + '</div>';
+    html += '<div class="nc-body">';
+    html += '<div class="nc-tags"><span class="nc-tag ' + tagMap[a._topic] + '">' + a._topic + '</span><span class="nc-live">Live</span></div>';
+    html += '<div class="nc-headline">' + a.title + '</div>';
+    html += '<div class="nc-meta"><span class="nc-source">' + (a.author || a._topic) + '</span><span class="nc-date">' + date + '</span></div>';
+    html += '</div></div>';
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function setTopic(el, topic) {
+  document.querySelectorAll('.topic-tab').forEach(function(t) { t.classList.remove('active'); });
+  el.classList.add('active');
+  currentTopic = topic;
+  renderNews();
+}
+
+function handleSearch(val) {
+  if (!val || val.length < 2) { renderNews(); return; }
+  var v = val.toLowerCase();
+  var filtered = allArticles.filter(function(a) {
+    return a.title.toLowerCase().includes(v) || (a.description || '').toLowerCase().includes(v);
+  });
+  var container = document.getElementById('newsContainer');
+  if (filtered.length === 0) { container.innerHTML = '<div class="no-results">No results for "' + val + '"</div>'; return; }
+  var tmp = allArticles;
+  allArticles = filtered;
+  renderNews();
+  allArticles = tmp;
+}
+
+function openDetail(encoded) {
+  var article = JSON.parse(encoded);
+  document.getElementById('feed-view').style.display = 'none';
+  document.getElementById('detail-view').style.display = 'block';
+  window.scrollTo(0, 0);
+  var imgUrl = (article.enclosure && article.enclosure.link && article.enclosure.type && article.enclosure.type.includes('image')) ? article.enclosure.link : (article.thumbnail || '');
+  var desc = article.description ? article.description.replace(/<[^>]+>/g, '').substring(0, 500) : 'No summary available.';
+  var mainHtml = '';
+  if (imgUrl) {
+    mainHtml += '<div class="detail-img"><img src="' + imgUrl + '" alt=""></div>';
+  } else {
+    mainHtml += '<div class="detail-img"><span style="color:#9ca3af;font-family:Arial,sans-serif;font-size:12px;">' + labelMap[article._topic] + '</span></div>';
+  }
+  mainHtml += '<div class="detail-tag-row"><span class="nc-tag ' + tagMap[article._topic] + '">' + article._topic + '</span><span style="font-size:11px;color:#9ca3af;font-family:Arial,sans-serif;">' + (article.pubDate ? article.pubDate.substring(0, 10) : '') + '</span></div>';
+  mainHtml += '<div class="detail-title">' + article.title + '</div>';
+  mainHtml += '<div class="detail-summary">' + desc + '</div>';
+  mainHtml += '<a class="detail-link" href="' + article.link + '" target="_blank">Read full article at source</a>';
+  mainHtml += '<div style="margin-top:22px;">';
+  mainHtml += '<div class="panel"><div class="panel-hd"><div class="panel-badge">A</div><div class="panel-title">Background and Context</div></div><div class="panel-body" id="pA"><div class="loading"><span class="ld"></span><span class="ld"></span><span class="ld"></span><span>Generating analysis...</span></div></div></div>';
+  mainHtml += '<div class="panel"><div class="panel-hd"><div class="panel-badge">B</div><div class="panel-title">What This Means</div></div><div class="panel-body" id="pB"><div style="color:#9ca3af;font-size:12px;font-family:Arial,sans-serif;">Loading...</div></div></div>';
+  mainHtml += '<div class="panel"><div class="panel-hd"><div class="panel-badge">C</div><div class="panel-title">Who Is Affected</div></div><div class="panel-body" id="pC"><div style="color:#9ca3af;font-size:12px;font-family:Arial,sans-serif;">Loading...</div></div></div>';
+  mainHtml += '<div class="panel"><div class="panel-hd"><div class="panel-badge">D</div><div class="panel-title">What to Watch</div></div><div class="panel-body" id="pD"><div style="color:#9ca3af;font-size:12px;font-family:Arial,sans-serif;">Loading...</div></div></div>';
+  mainHtml += '</div>';
+  document.getElementById('detail-main').innerHTML = mainHtml;
+  var sideHtml = '<div class="panel"><div class="panel-hd"><div class="panel-badge">SA</div><div class="panel-title">Stakeholder Atlas</div></div><div class="panel-body" id="stPanel"><div style="color:#9ca3af;font-size:12px;font-family:Arial,sans-serif;">Generating...</div></div></div>';
+  sideHtml += '<div class="panel" style="margin-top:14px;"><div class="panel-hd"><div class="panel-badge">SP</div><div class="panel-title">Scenario Planning</div></div><div class="panel-body"><div class="sc-grid" id="scPanel"><div class="sc-card"><div class="sc-label">Loading</div><div class="sc-title">Generating scenarios...</div></div></div></div></div>';
+  document.getElementById('detail-side').innerHTML = sideHtml;
+  generatePanels(article);
+}
+
+async function callClaude(prompt, maxTokens) {
+  var key = getKey();
+  if (!key) return null;
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: maxTokens || 500,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    var data = await resp.json();
+    if (data.content && data.content[0]) {
+      return data.content[0].text.replace(/```json|```/g, '').trim();
+    }
+  } catch(e) {}
+  return null;
+}
+
+async function generatePanels(article) {
+  var desc = article.description ? article.description.replace(/<[^>]+>/g, '').substring(0, 300) : '';
+  var prompt = 'You are a senior public affairs analyst. Analyse this news signal and respond ONLY with valid JSON, no other text. Headline: ' + article.title + ' Area: ' + article._topic + ' Summary: ' + desc + ' Respond with exactly: {"background":"3 sentences of historical and political context","means":"2 sentences on what this means for policy","affected":"2 sentences on who is directly affected","watch":"3 specific things to monitor, separated by semicolons"}';
+  var text = await callClaude(prompt, 500);
+  if (text) {
+    try {
+      var p = JSON.parse(text);
+      var pA = document.getElementById('pA'); if (pA) pA.innerHTML = p.background || '';
+      var pB = document.getElementById('pB'); if (pB) pB.innerHTML = p.means || '';
+      var pC = document.getElementById('pC'); if (pC) pC.innerHTML = p.affected || '';
+      var pD = document.getElementById('pD'); if (pD) pD.innerHTML = p.watch || '';
+    } catch(e) {
+      var pA = document.getElementById('pA');
+      if (pA) pA.innerHTML = '<span style="color:#9ca3af;">Analysis unavailable — check API key.</span>';
+    }
+  } else {
+    var pA = document.getElementById('pA');
+    if (pA) pA.innerHTML = '<span style="color:#9ca3af;">Add your Claude API key above to enable analysis.</span>';
+  }
+  generateStakeholdersAndScenarios(article);
+}
+
+async function generateStakeholdersAndScenarios(article) {
+  var prompt = 'You are a senior GR analyst. Based on this news signal respond ONLY with valid JSON. Headline: ' + article.title + ' Area: ' + article._topic + ' Respond with exactly: {"stakeholders":[{"name":"Actor name","role":"Their role","position":"Their position on this issue","color":"#1e40af"},{"name":"Actor name","role":"Their role","position":"Their position","color":"#166534"},{"name":"Actor name","role":"Their role","position":"Their position","color":"#991b1b"}],"scenarios":[{"label":"Scenario A","title":"Short title","body":"2 sentences"},{"label":"Scenario B","title":"Short title","body":"2 sentences"},{"label":"Scenario C","title":"Short title","body":"2 sentences"},{"label":"Scenario D","title":"Short title","body":"2 sentences"}]}';
+  var text = await callClaude(prompt, 600);
+  if (text) {
+    try {
+      var p = JSON.parse(text);
+      var stPanel = document.getElementById('stPanel');
+      if (stPanel && p.stakeholders) {
+        stPanel.innerHTML = p.stakeholders.map(function(s) {
+          return '<div class="st-item"><div class="st-dot" style="background:' + s.color + ';"></div><div><div class="st-name">' + s.name + '</div><div class="st-role">' + s.role + '</div><div class="st-pos">' + s.position + '</div></div></div>';
+        }).join('');
+      }
+      var scPanel = document.getElementById('scPanel');
+      if (scPanel && p.scenarios) {
+        scPanel.innerHTML = p.scenarios.map(function(s) {
+          return '<div class="sc-card"><div class="sc-label">' + s.label + '</div><div class="sc-title">' + s.title + '</div><div class="sc-body">' + s.body + '</div></div>';
+        }).join('');
+      }
+    } catch(e) {}
+  }
+}
+
+function closeDetail() {
+  document.getElementById('feed-view').style.display = 'block';
+  document.getElementById('detail-view').style.display = 'none';
+  window.scrollTo(0, 0);
+}
+
+async function runAnalysis() {
+  var url = document.getElementById('analyseUrl').value.trim();
+  if (!url) return;
+  var result = document.getElementById('analyseResult');
+  result.innerHTML = '<div class="loading"><span class="ld"></span><span class="ld"></span><span class="ld"></span><span>Claude is analysing the article...</span></div>';
+  var prompt = 'You are a senior public affairs analyst. A user has submitted this article URL: ' + url + ' Generate a structured intelligence brief. Respond ONLY with valid JSON: {"title":"Brief descriptive title","background":"3 sentences of context","implications":"2 sentences on policy implications","affected":"2 sentences on who is affected","watch":"3 specific things to monitor"}';
+  var text = await callClaude(prompt, 600);
+  if (text) {
+    try {
+      var p = JSON.parse(text);
+      var html = '<div class="brief-header"><div class="brief-label">Intelligence Brief</div><div class="brief-title">' + p.title + '</div><div class="brief-text">' + url + '</div></div>';
+      var panels = [['A','Background and Context',p.background],['B','Policy Implications',p.implications],['C','Who Is Affected',p.affected],['D','What to Watch',p.watch]];
+      panels.forEach(function(panel) {
+        html += '<div class="panel" style="margin-bottom:10px;"><div class="panel-hd"><div class="panel-badge">' + panel[0] + '</div><div class="panel-title">' + panel[1] + '</div></div><div class="panel-body">' + panel[2] + '</div></div>';
+      });
+      result.innerHTML = html;
+    } catch(e) {
+      result.innerHTML = '<div class="panel"><div class="panel-body"><span style="color:#9ca3af;">Could not parse response. Try again.</span></div></div>';
+    }
+  } else {
+    result.innerHTML = '<div class="panel"><div class="panel-body"><span style="color:#9ca3af;">Analysis unavailable. Check Claude API key in the Feed tab.</span></div></div>';
+  }
+}
+
+function filterLeg(btn, filter) {
+  document.querySelectorAll('.lf').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.querySelectorAll('#legBody tr').forEach(function(row) {
+    if (filter === 'all') row.style.display = '';
+    else if (filter === 'urgent') row.style.display = row.dataset.urgent === 'true' ? '' : 'none';
+    else if (filter === 'consultation') row.style.display = row.dataset.type === 'consultation' ? '' : 'none';
+    else if (filter === 'bill') row.style.display = row.dataset.type === 'bill' ? '' : 'none';
+    else row.style.display = row.dataset.j === filter ? '' : 'none';
+  });
+}
+
+setLiveDate();
+loadAllNews();
+</script>
+</body>
+</html>
