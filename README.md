@@ -1,7 +1,7 @@
 # Penumbra
 **Everything I read, finally in one place.**
 
-🔗 https://btraverso1.github.io/Penumbra/
+https://btraverso1.github.io/Penumbra/
 
 ---
 
