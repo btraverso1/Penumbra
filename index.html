@@ -198,6 +198,7 @@ body{font-family:Georgia,serif;background:#F2F1ED;color:#1a1a2e;font-size:14px;}
   .cal-wrap{padding:16px;}
   .cal-grid{grid-template-columns:1fr;}
   .sc-grid{grid-template-columns:1fr;}
+  .menu-btn{display:block!important;}
 }
 </style>
 </head>
@@ -205,6 +206,7 @@ body{font-family:Georgia,serif;background:#F2F1ED;color:#1a1a2e;font-size:14px;}
 
 <div class="topbar">
   <div class="logo" onclick="goHome()">PEN<span>UMBRA</span></div>
+  <button class="menu-btn" onclick="document.querySelector('.topnav').classList.toggle('open')" style="display:none;background:transparent;border:none;color:#fff;font-size:22px;cursor:pointer;padding:4px 8px;">☰</button>
   <div class="topnav">
     <button class="tnb active" onclick="showPage('feed',this)">Feed</button>
     <button class="tnb" onclick="showPage('analyse',this)">Analyse</button>
