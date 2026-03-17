@@ -105,7 +105,7 @@ body{font-family:Georgia,serif;background:#F2F1ED;color:#1a1a2e;font-size:14px;}
 .panel-title{font-size:11px;font-weight:700;color:#0f1f3d;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:0.3px;}
 .panel-body{padding:14px 16px;font-size:13px;color:#374151;line-height:1.75;font-family:Arial,sans-serif;}
 .st-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #f7f6f2;}
-.st-item:last-child{border-bottom:none;}
+.st-item:last-child{border-bottom:none;} 
 .st-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
 .st-name{font-size:12px;font-weight:700;color:#0f1f3d;font-family:Arial,sans-serif;}
 .st-role{font-size:11px;color:#6b7280;font-family:Arial,sans-serif;}
@@ -169,6 +169,34 @@ body{font-family:Georgia,serif;background:#F2F1ED;color:#1a1a2e;font-size:14px;}
 .cal-event{font-size:12px;color:#0f1f3d;margin-bottom:2px;line-height:1.4;}
 .cal-country{font-size:10px;color:#9ca3af;font-family:Arial,sans-serif;}
 .no-results{padding:40px 0;text-align:center;color:#9ca3af;font-family:Arial,sans-serif;font-size:13px;}
+@media(max-width:768px){
+  .topbar{padding:0 16px;}
+  .topnav{display:none;}
+  .hero{flex-direction:column;padding:24px 16px;gap:24px;}
+  .hero-box{width:100%;}
+  .hero-title{font-size:36px;letter-spacing:4px;}
+  .hero-desc{font-size:13px;}
+  .key-banner{padding:10px 16px;flex-wrap:wrap;gap:8px;}
+  .key-banner input{max-width:100%;width:100%;}
+  .topic-bar{overflow-x:auto;padding:0 16px;}
+  .topic-tab{padding:12px 12px;font-size:11px;white-space:nowrap;}
+  .search-bar{padding:8px 16px;}
+  .content-wrap{flex-direction:column;}
+  .content-right{width:100%;border-left:none;border-top:1px solid #e0dfd9;}
+  .content-main{padding:16px;}
+  .news-grid{grid-template-columns:1fr;}
+  .detail-wrap{grid-template-columns:1fr;}
+  .detail-view{padding:16px!important;}
+  #detail-side{margin-top:16px;}
+  .leg-wrap{padding:16px;}
+  .leg-table{font-size:11px;}
+  .leg-table th,.leg-table td{padding:8px 6px;}
+  .analyse-wrap{padding:16px;}
+  .analyse-input-row{flex-direction:column;}
+  .cal-wrap{padding:16px;}
+  .cal-grid{grid-template-columns:1fr;}
+  .sc-grid{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
